@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import asyncio
 import sys
 
 from textual.app import App, ComposeResult
 from textual.reactive import var
 from textual.widget import Widget
 from textual.widgets import Footer
+import watchfiles
 
 from .widgets import MarkdownBrowser
 
@@ -40,9 +42,14 @@ class BrowserApp(App):
         self.browser.focus()
         if not await self.browser.go(self.path):
             self.exit(message=f"Unable to load {self.path!r}")
+        self.watcher = asyncio.create_task(self._watch(self.path))
 
     async def load(self, path: str) -> None:
         await self.browser.go(path)
+
+    async def _watch(self, path):
+        async for _ in watchfiles.awatch(path):
+            await self.load(path)
 
     def action_toggle_toc(self) -> None:
         self.browser.show_toc = not self.browser.show_toc
