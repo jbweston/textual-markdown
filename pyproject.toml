@@ -11,6 +11,7 @@ packages = [{include = "textual_markdown"}]
 python = "^3.7"
 textual = {extras = ["dev"], version = "^0.7.0"}
 markdown-it-py = {extras = ["plugins", "linkify"], version = "^2.1.0"}
+watchfiles = "^0.18.1"
 
 
 [build-system]
